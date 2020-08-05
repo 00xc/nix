@@ -106,6 +106,21 @@ matrix:
         - . $HOME/.cargo/env
         - cargo build --all-targets
 
+    - language: generic
+      name: fuchsia
+      script:
+        - curl --proto '=https' --tlsv1.2 -sSf --output rustup.sh https://sh.rustup.rs
+        - sh rustup.sh -y --profile=minimal --default-toolchain 1.40.0 --target x86_64-fuchsia
+        - . $HOME/.cargo/env
+        - cargo build --target x86_64-fuchsia
+        # cargo test wants to build a binary, but it isn't possible to link
+        # Rust binaries without the presence of a Fuchsia sysroot. When it is
+        # possible, we should make sure tests compile and link, too. Following
+        # that, we should run the tests when possible.
+        # - cargo test  --target x86_64-fuchsia --no-run
+        # All we can do for now is make sure the tests type-check:
+        - cargo check --target x86_64-fuchsia --all-targets
+
 before_install: set -e
 
 install:
