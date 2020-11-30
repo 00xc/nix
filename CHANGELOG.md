@@ -7,6 +7,9 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - Added `mremap` (#[1306](https://github.com/nix-rust/nix/pull/1306))
 
+### Changed
+- Minimum supported Rust version is now 1.40.0.
+  ([#1285](https://github.com/nix-rust/nix/pull/1285))
 ### Fixed
 ### Changed
 ### Removed
