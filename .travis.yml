@@ -18,69 +18,69 @@ matrix:
     # week.  Additionally they're moved to the front of the line to get them in
     # the Travis OS X build queue first.
     - env: TARGET="aarch64-apple-ios;armv7-apple-ios;armv7s-apple-ios;i386-apple-ios;x86_64-apple-ios" DISABLE_TESTS=1
-      rust: 1.36.0
+      rust: 1.40.0
       os: osx
 
     # Mac builds
     # These are also moved to be first because they wait in a long queue with
     # Travis
     - env: TARGET=i686-apple-darwin
-      rust: 1.36.0
+      rust: 1.40.0
       os: osx
     - env: TARGET=x86_64-apple-darwin
-      rust: 1.36.0
+      rust: 1.40.0
       os: osx
 
     # Android
     - env: TARGET=aarch64-linux-android DISABLE_TESTS=1
-      rust: 1.36.0
+      rust: 1.40.0
     - env: TARGET=arm-linux-androideabi DISABLE_TESTS=1
-      rust: 1.36.0
+      rust: 1.40.0
     - env: TARGET=armv7-linux-androideabi DISABLE_TESTS=1
-      rust: 1.36.0
+      rust: 1.40.0
     - env: TARGET=i686-linux-android DISABLE_TESTS=1
-      rust: 1.36.0
+      rust: 1.40.0
     - env: TARGET=x86_64-linux-android DISABLE_TESTS=1
-      rust: 1.36.0
+      rust: 1.40.0
 
     # Linux
     - env: TARGET=aarch64-unknown-linux-gnu
-      rust: 1.36.0
+      rust: 1.40.0
     - env: TARGET=arm-unknown-linux-gnueabi
-      rust: 1.36.0
+      rust: 1.40.0
     - env: TARGET=arm-unknown-linux-musleabi DISABLE_TESTS=1
-      rust: 1.36.0
+      rust: 1.40.0
     - env: TARGET=armv7-unknown-linux-gnueabihf
-      rust: 1.36.0
+      rust: 1.40.0
     - env: TARGET=i686-unknown-linux-gnu
-      rust: 1.36.0
+      rust: 1.40.0
     - env: TARGET=i686-unknown-linux-musl
-      rust: 1.36.0
+      rust: 1.40.0
     - env: TARGET=mips-unknown-linux-gnu
-      rust: 1.36.0
+      rust: 1.40.0
     - env: TARGET=mips64-unknown-linux-gnuabi64
-      rust: 1.36.0
+      rust: 1.40.0
     - env: TARGET=mips64el-unknown-linux-gnuabi64
-      rust: 1.36.0
+      rust: 1.40.0
     - env: TARGET=mipsel-unknown-linux-gnu
-      rust: 1.36.0
+      rust: 1.40.0
     - env: TARGET=powerpc-unknown-linux-gnu DISABLE_TESTS=1
-      rust: 1.36.0
+      rust: 1.40.0
     - env: TARGET=powerpc64le-unknown-linux-gnu
-      rust: 1.36.0
+      rust: 1.40.0
     - env: TARGET=s390x-unknown-linux-gnu DISABLE_TESTS=1
-      rust: 1.36.0
+      rust: 1.40.0
     - env: TARGET=x86_64-unknown-linux-gnu
-      rust: 1.36.0
+      rust: 1.40.0
     - env: TARGET=x86_64-unknown-linux-musl
-      rust: 1.36.0
+      rust: 1.40.0
 
     # *BSD
     # FreeBSD i686 and x86_64 use Cirrus instead of Travis
     # - env: TARGET=i686-unknown-freebsd DISABLE_TESTS=1
     # - env: TARGET=x86_64-unknown-freebsd DISABLE_TESTS=1
     - env: TARGET=x86_64-unknown-netbsd DISABLE_TESTS=1
-      rust: 1.36.0
+      rust: 1.40.0
 
     # Make sure stable is always working too
     - env: TARGET=x86_64-unknown-linux-gnu
@@ -102,9 +102,24 @@ matrix:
       name: redox
       script:
         - curl --proto '=https' --tlsv1.2 -sSf --output rustup.sh https://sh.rustup.rs
-        - sh rustup.sh -y --profile=minimal --default-toolchain 1.36.0 --target x86_64-unknown-redox
+        - sh rustup.sh -y --profile=minimal --default-toolchain 1.40.0 --target x86_64-unknown-redox
         - . $HOME/.cargo/env
         - cargo build --all-targets
+
+    - language: generic
+      name: fuchsia
+      script:
+        - curl --proto '=https' --tlsv1.2 -sSf --output rustup.sh https://sh.rustup.rs
+        - sh rustup.sh -y --profile=minimal --default-toolchain 1.40.0 --target x86_64-fuchsia
+        - . $HOME/.cargo/env
+        - cargo build --target x86_64-fuchsia
+        # cargo test wants to build a binary, but it isn't possible to link
+        # Rust binaries without the presence of a Fuchsia sysroot. When it is
+        # possible, we should make sure tests compile and link, too. Following
+        # that, we should run the tests when possible.
+        # - cargo test  --target x86_64-fuchsia --no-run
+        # All we can do for now is make sure the tests type-check:
+        - cargo check --target x86_64-fuchsia --all-targets
 
 before_install: set -e
 

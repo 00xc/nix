@@ -49,7 +49,7 @@ macro_rules! skip_if_jailed {
     }
 }
 
-#[cfg(not(target_os = "redox"))]
+#[cfg(not(any(target_os = "redox", target_os = "fuchsia")))]
 macro_rules! skip_if_not_root {
     ($name:expr) => {
         use nix::unistd::Uid;
@@ -131,7 +131,7 @@ mod test_mq;
 mod test_net;
 mod test_nix_path;
 mod test_poll;
-#[cfg(not(target_os = "redox"))]
+#[cfg(not(any(target_os = "redox", target_os = "fuchsia")))]
 mod test_pty;
 #[cfg(any(target_os = "android",
           target_os = "linux"))]
